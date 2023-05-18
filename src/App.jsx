@@ -3,6 +3,9 @@ import Header from './components/Header'
 import Main from './components/Main'
 import { apiGetAllCandidates, apiGetAllCities, apiGetAllElection } from './services/apiService';
 import SelectCity from './components/SelectCity';
+import DataTotal from './components/DataTotal';
+import AllCardsCandidates from './components/AllCardsCandidates';
+import { ClipLoader } from "react-spinners";
 
 export default function App() {
 
@@ -32,24 +35,38 @@ export default function App() {
     getAllItens()
     
   }, [])
-  console.log(allCities)
   function handleSelectedCity(city){
-    setSelectedCity(city)
-    console.log(city)
+    setSelectedCity(city) 
   }
+  
+  let mainJsx = (<div className='flex justify-center my-4'>
+  <ClipLoader/>
+  </div>)
+
+  if(error){
+    mainJsx = <p>{error}</p>
+  }
+
+  if(!loading){
+    mainJsx = 
+    <>
+      <SelectCity allCities={allCities} whitchCity = {handleSelectedCity}/>
+
+      <div className='border p-2 text-center'>
+          <strong >Eleição em {selectedCity.name}</strong>
+          <DataTotal selectedCity={selectedCity}/>
+          <AllCardsCandidates  
+          selectedCity={selectedCity} 
+          allCandidates={allCandidates} 
+          allElection={allElection}/>
+      </div>
+    </>}
 
   return (
     <div>
       <Header>React Elections</Header>
-
-      <Main>
-        <SelectCity allCities={allCities} whitchCity = {handleSelectedCity}/>
-
-        <div className='border p-2 text-center'>
-            <strong >Eleição em {selectedCity}</strong>
-            <div></div>
-        </div>
-      </Main>
+      
+      <Main> {mainJsx} </Main>
     </div>
   );
 }
